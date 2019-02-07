@@ -13,9 +13,11 @@ steps:
     dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
     dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
 
+- script: dotnet restore
+
 - task: DotNetCoreInstaller@0
   inputs:
-    version: '2.1.300' # replace this value with the version that you need for your project
+    version: '2.2' # replace this value with the version that you need for your project
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()
@@ -24,3 +26,9 @@ steps:
     testResultsFiles: '**/*.trx'
 
 - task: PublishBuildArtifacts@1
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
